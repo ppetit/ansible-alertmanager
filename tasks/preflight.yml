@@ -41,7 +41,7 @@
   set_fact:
     alertmanager_checksum: "{{ item.split(' ')[0] }}"
   with_items:
-    - "{{ lookup('url', 'https://github.com/prometheus/alertmanager/releases/download/v' + alertmanager_version + '/sha256sums.txt', wantlist=True) | list }}"
+    - "{{ lookup('url', alertmanager_download_url + alertmanager_version + '/sha256sums.txt', wantlist=True) | list }}"
   when: "('linux-' + go_arch + '.tar.gz') in item"
 
 - name: Backward compatibility of variable [part 1]
