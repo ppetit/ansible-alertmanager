@@ -30,7 +30,10 @@
   get_url:
     url: "{{alertmanager_download_url}}{{ alertmanager_version }}/alertmanager-{{ alertmanager_version }}.linux-{{ go_arch }}.tar.gz"
     dest: "/tmp/alertmanager-{{ alertmanager_version }}.linux-{{ go_arch }}.tar.gz"
-    checksum: "sha256:{{ alertmanager_checksum }}"
+    checksum: "sha256:{{ alertmanager_checksum | default(omit) }}"
+    url_username: "{{ alertmanager_download_auth.username | default(omit) }}"
+    url_password: "{{ alertmanager_download_auth.password | default(omit) }}"
+    validate_certs: "{{ alertmanager_download_auth.validate_certs | default(True) }}"
   register: _download_archive
   until: _download_archive is succeeded
   retries: 5
