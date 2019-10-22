@@ -1,4 +1,14 @@
 ---
+- name: Allow alertmanager to bind to port in SELinux on RedHat OS family
+  seport:
+    ports: "{{ alertmanager_web_listen_address.split(':')[1] }}"
+    proto: tcp
+    setype: http_port_t
+    state: present
+  when:
+    - ansible_version.full is version_compare('2.4', '>=')
+    - ansible_selinux.status == "enabled"
+
 - name: create alertmanager system group
   group:
     name: alertmanager
@@ -51,6 +61,14 @@
   delegate_to: localhost
   check_mode: false
 
+- name: create systemd service unit
+  template:
+    src: alertmanager.service.j2
+    dest: /etc/systemd/system/alertmanager.service
+    owner: root
+    group: root
+    mode: 0644
+
 - name: propagate alertmanager and amtool binaries
   copy:
     src: "/tmp/alertmanager-{{ alertmanager_version }}.linux-{{ go_arch }}/{{ item }}"
@@ -63,26 +81,3 @@
     - amtool
   notify:
     - restart alertmanager
-
-- name: Install SELinux dependencies on RedHat OS family
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items: "{{ alertmanager_selinux_packages }}"
-  register: _install_packages
-  until: _install_packages is success
-  retries: 5
-  delay: 2
-  when:
-    - ansible_version.full is version_compare('2.4', '>=')
-    - ansible_selinux.status == "enabled"
-
-- name: Allow alertmanager to bind to port in SELinux on RedHat OS family
-  seport:
-    ports: "{{ alertmanager_web_listen_address.split(':')[1] }}"
-    proto: tcp
-    setype: http_port_t
-    state: present
-  when:
-    - ansible_version.full is version_compare('2.4', '>=')
-    - ansible_selinux.status == "enabled"

@@ -9,17 +9,7 @@
     mode: 0644
     validate: "/usr/local/bin/amtool --alertmanager.url=  check-config %s"
   notify:
-    - restart alertmanager
-
-- name: create systemd service unit
-  template:
-    src: alertmanager.service.j2
-    dest: /etc/systemd/system/alertmanager.service
-    owner: root
-    group: root
-    mode: 0644
-  notify:
-    - restart alertmanager
+    - reload alertmanager
 
 - name: copy alertmanager template files
   copy:
@@ -30,3 +20,6 @@
     group: alertmanager
     mode: 0644
   with_fileglob: "{{ alertmanager_template_files }}"
+  notify:
+    - reload alertmanager
+
