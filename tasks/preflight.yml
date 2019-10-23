@@ -53,7 +53,6 @@
     - alertmanager_checksum is not defined
     - "('linux-' + go_arch + '.tar.gz') in item"
 
-
 - name: Backward compatibility of variable [part 1]
   set_fact:
     alertmanager_config_flags_extra: "{{ alertmanager_cli_flags }}"
