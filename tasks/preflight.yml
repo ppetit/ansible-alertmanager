@@ -43,9 +43,10 @@
   set_fact:
     _checksums: "{{ lookup('url', alertmanager_download_url + alertmanager_version + '/sha256sums.txt', wantlist=True) | list }}"
   run_once: true
+  delegate_to: localhost
   when: alertmanager_checksum is not defined
 
-- name: "Get checksum for {{ go_arch }} architecture"
+- name: "Get checksum for {{ go_arch_map[ansible_architecture] | default(ansible_architecture) }} architecture"
   set_fact:
     alertmanager_checksum: "{{ item.split(' ')[0] }}"
   with_items: "{{ _checksums }}"
