@@ -40,16 +40,7 @@ ExecStart=/usr/local/bin/alertmanager \
 SyslogIdentifier=alertmanager
 Restart=always
 RestartSec=5
-
-CapabilityBoundingSet=CAP_SET_UID
-LockPersonality=true
-NoNewPrivileges=true
-MemoryDenyWriteExecute=true
-PrivateTmp=true
-ProtectHome=true
 ReadWriteDirectories={{ alertmanager_db_dir }}
-RemoveIPC=true
-RestrictSUIDSGID=true
 
 {% if alertmanager_systemd_version | int >= 232 %}
 PrivateUsers=true
